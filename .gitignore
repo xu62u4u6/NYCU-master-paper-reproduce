@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.ipynb_checkpoints/
+
+# uv / virtualenv (keep uv.lock tracked)
+.venv/
+venv/
+
+# regenerated outputs
+outputs/
+
+# large binary sources (kept locally, not in git)
+paper/*.docx
+
+# data artifacts (read-only inputs live in ../data, never commit)
+*.db
+*.sqlite
+
+# OS / editor
+.DS_Store
+.vscode/
