@@ -1,0 +1,38 @@
+[project]
+name = "asc-reproduce"
+version = "0.1.0"
+description = "Reproducible downstream analysis for the NYCU ASC WES master thesis (2025)."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+
+# Pinned to a coherent late-2025 stack (thesis ran on Python 3.12.9).
+# pandas held <3 on purpose: notebooks were written against pandas 2.x and
+# break under the pandas 3.0 breaking changes. See README "環境地基".
+dependencies = [
+    "numpy>=2.1,<2.3",
+    "pandas>=2.2,<3.0",
+    "scipy>=1.14,<1.16",
+    "scikit-learn>=1.5,<1.7",
+    "statsmodels>=0.14,<0.15",
+    "matplotlib>=3.9,<3.11",
+    "seaborn>=0.13,<0.14",
+    "statannotations>=0.7,<0.8",
+    "networkx>=3.2",
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
+    "tqdm>=4.66",
+    "pymaftools",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "jupyter>=1.0",
+    "ipykernel>=6.29",
+]
+
+[tool.uv.sources]
+pymaftools = { path = "../pymaftools", editable = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

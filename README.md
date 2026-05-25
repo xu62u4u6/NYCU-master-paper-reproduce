@@ -75,7 +75,8 @@ reproduce/
 - [x] 盤 code 結構、確認入口資料 = ASC_cohort.db + processed_data/*.db
 - [x] 確認 py 版本 3.12.9;確認分析環境已刪、版本不可還原
 - [x] 建立本資料夾骨架
-- [ ] 第 1 步:建 py3.12 uv 環境 + lockfile,跑通 1 支 notebook(建議 result3.1.2)驗證現況可跑
+- [x] 第 1 步(環境):建 py3.12 uv 環境 + `uv.lock`(sklearn 1.6.1 / pandas 2.3.3 / numpy 2.2.6 / scipy 1.15.3);pymaftools editable;`Cohort.read_sqlite("data/ASC_cohort.db")` 驗證可載入(222 樣本:LUAD 89 / LUSC 82 / ASC 51;表:SNV, CNV_gene, CNV_arm, CNV_thresholded, signature)
+- [ ] 第 1 步(續):挑一支 notebook(建議 result3.1.2)實際跑通驗證
 - [ ] 第 2 步:逐一核對 notebook import,完成對照表
 - [ ] 第 3 步:抽 src/asc/ 模組 + analysis/*.py
 - [ ] 第 4 步:test_key_results.py(leakage 版 + nested 版)
