@@ -68,7 +68,20 @@ def build_cnv_tables(cohort_T):
     return cnv_gene, cnv_arm, cnv_cluster
 
 
-def main():
+def compute():
+    """執行完整的 CNV 顯著性 + Venn 分析,回傳所有關鍵中間結果。
+
+    抽成獨立函式,讓 main()(印出/存檔)與測試(斷言數字)共用同一份計算,
+    避免邏輯重複,也確保「測的就是跑的」。
+
+    Returns
+    -------
+    dict
+        arm_res / gene_res / cluster_res:各層級完整結果表
+        sig_arm / sig_gene / sig_cluster:q<0.1 的顯著子集
+        sig_arm_set / sig_cluster_arm_set:Venn 用的 arm 集合
+        common / only_cluster / only_arm:Venn 三區
+    """
     # === 1. 載入資料 ===
     # clustering_path 一定要給,否則 to_cluster_table() 無法取得 cluster 標籤
     dataloader = ASCDataLoader(clustering_path=CLUSTERING_PATH)
@@ -96,11 +109,6 @@ def main():
     sig_gene = gene_res[gene_res["KW_qval"] < 0.1]
     sig_cluster = cluster_res[cluster_res["KW_qval"] < 0.1]
 
-    print("\n========== 亞型層級 CNV 顯著性(q<0.1)==========")
-    print(f"arm     : {len(sig_arm):>5d} / {len(arm_res):<5d}  (論文 31)")
-    print(f"gene    : {len(sig_gene):>5d} / {len(gene_res):<5d}  (論文 17566 / 25988)")
-    print(f"cluster : {len(sig_cluster):>5d} / {len(cluster_res):<5d}  (論文 78 / 114)")
-
     # === 4. Venn:cluster 涉及的 arm vs arm 層級顯著 arm(Fig 11)===
     sig_arm_set = set(sig_arm.feature)
     sig_cluster_arm_set = set()
@@ -111,13 +119,31 @@ def main():
     only_cluster = sorted(sig_cluster_arm_set - sig_arm_set, key=chr_sort_key)
     only_arm = sorted(sig_arm_set - sig_cluster_arm_set, key=chr_sort_key)
 
+    return {
+        "arm_res": arm_res, "gene_res": gene_res, "cluster_res": cluster_res,
+        "sig_arm": sig_arm, "sig_gene": sig_gene, "sig_cluster": sig_cluster,
+        "sig_arm_set": sig_arm_set, "sig_cluster_arm_set": sig_cluster_arm_set,
+        "common": common, "only_cluster": only_cluster, "only_arm": only_arm,
+    }
+
+
+def main():
+    r = compute()
+    sig_arm, sig_gene, sig_cluster = r["sig_arm"], r["sig_gene"], r["sig_cluster"]
+    arm_res, gene_res, cluster_res = r["arm_res"], r["gene_res"], r["cluster_res"]
+
+    print("\n========== 亞型層級 CNV 顯著性(q<0.1)==========")
+    print(f"arm     : {len(sig_arm):>5d} / {len(arm_res):<5d}  (論文 31)")
+    print(f"gene    : {len(sig_gene):>5d} / {len(gene_res):<5d}  (論文 17566 / 25988)")
+    print(f"cluster : {len(sig_cluster):>5d} / {len(cluster_res):<5d}  (論文 78 / 114)")
+
     print("\n========== Fig 11 Venn(arm 集合)==========")
-    print(f"cluster 涉及的顯著 arm 數: {len(sig_cluster_arm_set)}  (論文 36)")
-    print(f"arm 層級顯著 arm 數      : {len(sig_arm_set)}  (論文 31)")
-    print(f"兩者交集(common)        : {len(common)}  (論文 29)")
-    print(f"  common      : {common}")
-    print(f"  only_cluster: {only_cluster}")
-    print(f"  only_arm    : {only_arm}")
+    print(f"cluster 涉及的顯著 arm 數: {len(r['sig_cluster_arm_set'])}  (論文 36)")
+    print(f"arm 層級顯著 arm 數      : {len(r['sig_arm_set'])}  (論文 31)")
+    print(f"兩者交集(common)        : {len(r['common'])}  (論文 29)")
+    print(f"  common      : {r['common']}")
+    print(f"  only_cluster: {r['only_cluster']}")
+    print(f"  only_arm    : {r['only_arm']}")
 
     # === 5. 輸出表格 ===
     # Supp Table 1:arm 層級顯著結果(依 q 值排序)
