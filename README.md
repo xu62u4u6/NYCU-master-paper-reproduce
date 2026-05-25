@@ -49,8 +49,8 @@ reproduce/
 | 論文結果 | 來源 notebook | 主要輸入 |
 |---|---|---|
 | Fig5/6 oncoplot + SMG(MutSigCV) | `result3.1.1.ipynb` | ASC_cohort.db |
-| Fig7/8/9 genomic metrics / signature / HRD | `result3.1.2.ipynb` | ASC_cohort.db, signature_table.db |
-| Fig10/11 CNV landscape + 114 clusters | `result3.1.3.ipynb` | gene_cnv.db, arm_cnv.db, cluster_table.db |
+| **Fig10/11 CNV landscape + 114 clusters + Supp Table 1/2** | `result3.1.2.ipynb` ✅已重現 | CNV_0407/*.db, clustering csv |
+| Fig7/8/9 genomic metrics / signature / HRD | `result3.1.3.ipynb`(待核對) | WES, signature db |
 | Fig12/13/22/23 similarity | `result3.1.4_3.2.4.ipynb` | ASC_cohort.db, cnv dbs |
 | Fig14/15/24 PCA/CCA | `result3.1.5_3.2.5_dimension_reduction.ipynb` | ASC_cohort.db, cnv dbs |
 | Fig16–21 component-level | `result3.2.1/2/3.ipynb` | ASC_cohort.db, pyclone_output |
@@ -76,8 +76,10 @@ reproduce/
 - [x] 確認 py 版本 3.12.9;確認分析環境已刪、版本不可還原
 - [x] 建立本資料夾骨架
 - [x] 第 1 步(環境):建 py3.12 uv 環境 + `uv.lock`(sklearn 1.6.1 / pandas 2.3.3 / numpy 2.2.6 / scipy 1.15.3);pymaftools editable;`Cohort.read_sqlite("data/ASC_cohort.db")` 驗證可載入(222 樣本:LUAD 89 / LUSC 82 / ASC 51;表:SNV, CNV_gene, CNV_arm, CNV_thresholded, signature)
-- [ ] 第 1 步(續):挑一支 notebook(建議 result3.1.2)實際跑通驗證
-- [ ] 第 2 步:逐一核對 notebook import,完成對照表
-- [ ] 第 3 步:抽 src/asc/ 模組 + analysis/*.py
+- [x] 第 1 步(續):result3.1.2(CNV landscape)完整跑通並**精確重現論文數字**(arm 31、gene 17566/25988、cluster 78/114、Venn 36/31/29)
+- [x] 抽出 `src/asc/stats.py`(KW + pairwise MWU + FDR,跨章節共用)
+- [x] 完成 `analysis/cnv_landscape_clustering.py`(對應 Fig10/11 + Supp Table 1/2)
+- [ ] 第 2 步:逐一核對其餘 notebook import,完成對照表
+- [ ] 第 3 步:續抽其餘 analysis/*.py(下一支建議 result3.1.1 oncoplot/SMG 或 result3.3 模型)
 - [ ] 第 4 步:test_key_results.py(leakage 版 + nested 版)
 - [ ] 第 5 步:run_all.sh + 完善 README(db checksum、一鍵指令)
